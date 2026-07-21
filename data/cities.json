@@ -1,0 +1,31 @@
+{
+  "hammer": "Fort Sterling",
+  "spear": "Fort Sterling",
+  "holystaff": "Fort Sterling",
+  "plate_helmet": "Fort Sterling",
+  "cloth_armor": "Fort Sterling",
+
+  "sword": "Lymhurst",
+  "bow": "Lymhurst",
+  "arcanestaff": "Lymhurst",
+  "leather_helmet": "Lymhurst",
+  "leather_shoes": "Lymhurst",
+
+  "crossbow": "Bridgewatch",
+  "dagger": "Bridgewatch",
+  "cursestaff": "Bridgewatch",
+  "plate_armor": "Bridgewatch",
+  "cloth_shoes": "Bridgewatch",
+
+  "axe": "Martlock",
+  "quarterstaff": "Martlock",
+  "froststaff": "Martlock",
+  "plate_shoes": "Martlock",
+  "offhand": "Martlock",
+
+  "mace": "Thetford",
+  "firestaff": "Thetford",
+  "naturestaff": "Thetford",
+  "leather_armor": "Thetford",
+  "cloth_helmet": "Thetford"
+}
