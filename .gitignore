@@ -28,4 +28,4 @@ yarn-error.log*
 next-env.d.ts
 
 # private captured market data (never publish this)
-/private-market.json
+# private-market.json
