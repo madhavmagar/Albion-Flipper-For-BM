@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCatalog } from "@/lib/catalog";
-import { getPrices } from "@/lib/aodp";
+import { getPricesForSource, normalizeSource } from "@/lib/prices";
 import { computeFlip } from "@/lib/calc";
 import { CITIES, DEFAULT_FRESH_HOURS } from "@/lib/constants";
 import type { FlipResult, FlipResponse } from "@/types";
@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
   const q = req.nextUrl.searchParams;
 
   const premium = q.get("premium") !== "false"; // default true
+  const source = normalizeSource(q.get("source"));
   const freshHours = num(q.get("freshHours"), DEFAULT_FRESH_HOURS);
   const minProfit = num(q.get("minProfit"), 0);
   const minMargin = num(q.get("minMargin"), 0);
@@ -36,7 +37,7 @@ export async function GET(req: NextRequest) {
     return true;
   });
 
-  const prices = await getPrices(filtered.map((it) => it.id));
+  const prices = await getPricesForSource(filtered.map((it) => it.id), source);
 
   let priced = 0;
   const results: FlipResult[] = [];
@@ -60,6 +61,7 @@ export async function GET(req: NextRequest) {
       matched: results.length,
       generatedAt: new Date().toISOString(),
       premium,
+      source,
       freshHours,
       priced,
     },

@@ -1,21 +1,23 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSettings } from "@/components/Providers";
 import { DEFAULT_FRESH_HOURS } from "@/lib/constants";
 import { MaterialTypeChips, TierChips } from "@/components/Filters";
 import { Field, TextInput, Button, Spinner } from "@/components/ui";
 import { MaterialsTable } from "@/components/MaterialsTable";
 import { EmptyState, LoadingState, ErrorState } from "@/components/bits";
-import { useScan, buildQuery } from "@/components/useScan";
+import { useScan, usePersistentState, buildQuery } from "@/components/useScan";
 import type { MaterialsResponse } from "@/types";
 
 const STORAGE_KEY = "af.matprices";
 
 export default function MaterialsPage() {
-  const [types, setTypes] = useState<string[]>(["Refined"]);
-  const [tiers, setTiers] = useState<number[]>([]);
-  const [search, setSearch] = useState("");
-  const [nonce, setNonce] = useState(0);
+  const { source } = useSettings();
+  const [types, setTypes] = usePersistentState<string[]>("mat.types", ["Refined"]);
+  const [tiers, setTiers] = usePersistentState<number[]>("mat.tiers", []);
+  const [search, setSearch] = usePersistentState("mat.search", "");
+  const [nonce, setNonce] = usePersistentState("mat.nonce", 0);
   const [overrides, setOverrides] = useState<Record<string, number>>({});
 
   useEffect(() => {
@@ -34,10 +36,11 @@ export default function MaterialsPage() {
         types: types.join(","),
         tiers: tiers.join(","),
         search,
+        source,
         freshHours: DEFAULT_FRESH_HOURS,
         _: nonce,
       }),
-    [types, tiers, search, nonce],
+    [types, tiers, search, source, nonce],
   );
   const { data, loading, error } = useScan<MaterialsResponse>(url);
 

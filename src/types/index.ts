@@ -95,7 +95,7 @@ export interface MaterialRow extends Material {
 
 export interface MaterialsResponse {
   results: MaterialRow[];
-  meta: { scanned: number; generatedAt: string; cities: string[] };
+  meta: { scanned: number; generatedAt: string; cities: string[]; source: string };
 }
 
 export interface FlipResponse {
@@ -105,6 +105,7 @@ export interface FlipResponse {
     matched: number;
     generatedAt: string;
     premium: boolean;
+    source: string;
     freshHours: number;
     priced: number; // items with any price data
   };
@@ -121,5 +122,6 @@ export interface CraftResponse {
     city: string;
     stationFee: number;
     resourceSource: string;
+    source: string;
   };
 }

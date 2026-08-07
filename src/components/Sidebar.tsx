@@ -5,17 +5,18 @@ import { usePathname } from "next/navigation";
 import { ThemeToggle } from "./ThemeToggle";
 import { useSettings } from "./Providers";
 import { Segmented } from "./ui";
+import { CaptureStatus } from "./CaptureStatus";
 import { ATTRIBUTION } from "@/lib/constants";
 
 const NAV = [
   { href: "/flips", label: "Black Market Flips", icon: FlipIcon },
-  { href: "/craft", label: "Crafting Calculator", icon: CraftIcon },
+  { href: "/craft", label: "BM Crafting Flips", icon: CraftIcon },
   { href: "/materials", label: "Material Prices", icon: MaterialIcon },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { premium, setPremium } = useSettings();
+  const { premium, setPremium, source, setSource } = useSettings();
 
   return (
     <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col border-r bg-surface lg:w-64">
@@ -53,6 +54,27 @@ export function Sidebar() {
       <div className="mx-3 my-3 border-t" />
 
       <div className="flex flex-col gap-4 px-4">
+        <div className="flex flex-col gap-2">
+          <span className="text-xs font-medium uppercase tracking-wide text-muted">Data source</span>
+          <Segmented
+            value={source}
+            onChange={setSource}
+            options={[
+              { value: "public", label: "Public" },
+              { value: "private", label: "Private" },
+              { value: "hybrid", label: "Hybrid" },
+            ]}
+          />
+          <span className="text-xs text-muted">
+            {source === "public"
+              ? "Crowd-sourced AODP prices."
+              : source === "private"
+                ? "Only prices your local client captured."
+                : "Your captured prices, public fills the gaps."}
+          </span>
+          <CaptureStatus />
+        </div>
+
         <div className="flex flex-col gap-2">
           <span className="text-xs font-medium uppercase tracking-wide text-muted">Account</span>
           <Segmented

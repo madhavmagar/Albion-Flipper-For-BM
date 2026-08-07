@@ -101,6 +101,10 @@ export const MATERIAL_TYPES = ["Refined", "Component", "Crest", "Artifact", "Tok
 
 export type MaterialType = (typeof MATERIAL_TYPES)[number];
 
+/** Price data sources: public AODP, your local private capture, or hybrid. */
+export const SOURCES = ["public", "private", "hybrid"] as const;
+export type PriceSource = (typeof SOURCES)[number];
+
 /** Default freshness window: ignore prices older than this many hours. */
 export const DEFAULT_FRESH_HOURS = 24;
 

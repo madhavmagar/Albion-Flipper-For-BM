@@ -54,6 +54,27 @@ City crafting specialties (+15% return) are in `data/cities.json`.
 
 Both tabs filter by **top-level category** (Weapons, Off-hands, Head/Body/Foot Armor, Bags, Capes), **tier**, **min profit**, **min margin %**, **sort**, and **search**, plus a global **Premium/Non-premium** toggle. The Crafting tab adds a **city** selector, **focus** toggle, and **station fee** input.
 
+## Private data (optional, local capture)
+
+By default the app uses **Public** (crowd-sourced AODP) prices. You can also feed it **your own live prices** captured locally — nothing is ever uploaded to the public database. Use the **Public / Private / Hybrid** toggle in the sidebar:
+
+- **Public** — crowd-sourced AODP (everything, but can be stale).
+- **Private** — only prices your local client captured (live, but only items you've opened in-game).
+- **Hybrid** — your live private price where you have it, public fills the rest.
+
+### One-time setup
+1. Install **[Npcap](https://npcap.com)**.
+2. Install the **[Albion Online Data Client](https://www.albion-online-data.com/)** (default path `C:\Program Files\Albion Data Client\albiondata-client.exe`).
+
+### Each session
+1. Start the app: `npm run dev` (must be running on port 3000).
+2. Double-click **`start-private-capture.bat`** (it self-elevates to Administrator).
+   - It runs `albiondata-client.exe -i http://127.0.0.1:3000/api/ingest` — the `-i` flag **replaces** the public upload target, so market data is POSTed **only to your machine**.
+3. Play Albion and **open the marketplace / Black Market in-game** for the items and cities you care about — the client only captures what your game client actually shows you.
+4. Switch the sidebar toggle to **Private** or **Hybrid**.
+
+Captured data is stored in a git-ignored `private-market.json` and never leaves your machine. This uses passive read-only packet capture (a gray area under Albion's ToS, like all AODP-style tools) — use at your own discretion.
+
 ## Notes
 
 - Market data is crowd-sourced; treat results as guidance, not guarantees. Transport risk to Caerleon is not modeled — keep a margin buffer.

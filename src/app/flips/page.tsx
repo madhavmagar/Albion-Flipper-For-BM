@@ -1,33 +1,34 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useSettings } from "@/components/Providers";
 import { DEFAULT_FRESH_HOURS, type Category } from "@/lib/constants";
 import { CategoryChips, TierChips, CityChips, SORT_OPTIONS } from "@/components/Filters";
 import { Field, NumberInput, Select, TextInput, Button, Spinner } from "@/components/ui";
 import { FlipTable } from "@/components/FlipTable";
 import { EmptyState, LoadingState, ErrorState } from "@/components/bits";
-import { useScan, buildQuery } from "@/components/useScan";
+import { useScan, usePersistentState, buildQuery } from "@/components/useScan";
 import type { FlipResponse } from "@/types";
 
 type Sort = "profit" | "margin" | "tier" | "name";
 
 export default function FlipsPage() {
-  const { premium } = useSettings();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [tiers, setTiers] = useState<number[]>([]);
-  const [cities, setCities] = useState<string[]>([]);
-  const [minProfit, setMinProfit] = useState(1000);
-  const [minMargin, setMinMargin] = useState(0);
-  const [sort, setSort] = useState<Sort>("profit");
-  const [search, setSearch] = useState("");
-  const [nonce, setNonce] = useState(0);
+  const { premium, source } = useSettings();
+  const [categories, setCategories] = usePersistentState<Category[]>("flips.categories", []);
+  const [tiers, setTiers] = usePersistentState<number[]>("flips.tiers", []);
+  const [cities, setCities] = usePersistentState<string[]>("flips.cities", []);
+  const [minProfit, setMinProfit] = usePersistentState("flips.minProfit", 1000);
+  const [minMargin, setMinMargin] = usePersistentState("flips.minMargin", 0);
+  const [sort, setSort] = usePersistentState<Sort>("flips.sort", "profit");
+  const [search, setSearch] = usePersistentState("flips.search", "");
+  const [nonce, setNonce] = usePersistentState("flips.nonce", 0);
 
   const url = useMemo(
     () =>
       "/api/flips" +
       buildQuery({
         premium,
+        source,
         categories: categories.join(","),
         tiers: tiers.join(","),
         cities: cities.join(","),
@@ -38,7 +39,7 @@ export default function FlipsPage() {
         freshHours: DEFAULT_FRESH_HOURS,
         _: nonce,
       }),
-    [premium, categories, tiers, cities, minProfit, minMargin, sort, search, nonce],
+    [premium, source, categories, tiers, cities, minProfit, minMargin, sort, search, nonce],
   );
 
   const { data, loading, error } = useScan<FlipResponse>(url);

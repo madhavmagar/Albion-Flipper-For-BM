@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { cacheStats } from "@/lib/aodp";
+import { privateStats } from "@/lib/privateStore";
 import { getCatalog, getRecipes } from "@/lib/catalog";
 import { AODP_BASE } from "@/lib/constants";
 
@@ -25,6 +26,7 @@ export async function GET() {
     recipes: getRecipes().length,
     cache: cacheStats(),
     aodp: { ok: aodpOk, status: aodpStatus },
+    private: privateStats(),
     time: new Date().toISOString(),
   });
 }

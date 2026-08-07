@@ -1,13 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useSettings } from "@/components/Providers";
 import { CITIES, CRAFT_CITIES, DEFAULT_FRESH_HOURS, type Category } from "@/lib/constants";
 import { CategoryChips, TierChips, SORT_OPTIONS } from "@/components/Filters";
 import { Field, NumberInput, Select, TextInput, Button, Switch, Spinner } from "@/components/ui";
 import { CraftTable } from "@/components/CraftTable";
 import { EmptyState, LoadingState, ErrorState } from "@/components/bits";
-import { useScan, buildQuery } from "@/components/useScan";
+import { useScan, usePersistentState, buildQuery } from "@/components/useScan";
 import type { CraftResponse } from "@/types";
 
 type Sort = "profit" | "margin" | "tier" | "name";
@@ -23,18 +23,18 @@ const RESOURCE_SOURCE_OPTIONS: { value: string; label: string }[] = [
 ];
 
 export default function CraftPage() {
-  const { premium } = useSettings();
-  const [city, setCity] = useState<string>(CRAFT_CITIES[0]);
-  const [resSource, setResSource] = useState<string>("cheapest");
-  const [focus, setFocus] = useState(false);
-  const [stationFee, setStationFee] = useState(1000);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [tiers, setTiers] = useState<number[]>([]);
-  const [minProfit, setMinProfit] = useState(0);
-  const [minMargin, setMinMargin] = useState(0);
-  const [sort, setSort] = useState<Sort>("profit");
-  const [search, setSearch] = useState("");
-  const [nonce, setNonce] = useState(0);
+  const { premium, source } = useSettings();
+  const [city, setCity] = usePersistentState<string>("craft.city", CRAFT_CITIES[0]);
+  const [resSource, setResSource] = usePersistentState<string>("craft.resSource", "cheapest");
+  const [focus, setFocus] = usePersistentState("craft.focus", false);
+  const [stationFee, setStationFee] = usePersistentState("craft.stationFee", 1000);
+  const [categories, setCategories] = usePersistentState<Category[]>("craft.categories", []);
+  const [tiers, setTiers] = usePersistentState<number[]>("craft.tiers", []);
+  const [minProfit, setMinProfit] = usePersistentState("craft.minProfit", 0);
+  const [minMargin, setMinMargin] = usePersistentState("craft.minMargin", 0);
+  const [sort, setSort] = usePersistentState<Sort>("craft.sort", "profit");
+  const [search, setSearch] = usePersistentState("craft.search", "");
+  const [nonce, setNonce] = usePersistentState("craft.nonce", 0);
 
   const url = useMemo(
     () =>
@@ -42,6 +42,7 @@ export default function CraftPage() {
       buildQuery({
         city,
         premium,
+        source,
         focus,
         resSource,
         stationFee,
@@ -54,7 +55,7 @@ export default function CraftPage() {
         freshHours: DEFAULT_FRESH_HOURS,
         _: nonce,
       }),
-    [city, premium, focus, resSource, stationFee, categories, tiers, minProfit, minMargin, sort, search, nonce],
+    [city, premium, source, focus, resSource, stationFee, categories, tiers, minProfit, minMargin, sort, search, nonce],
   );
 
   const { data, loading, error } = useScan<CraftResponse>(url);
@@ -69,7 +70,7 @@ export default function CraftPage() {
       <header className="border-b bg-surface/80 px-6 py-4 backdrop-blur">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-lg font-bold">Crafting Calculator</h1>
+            <h1 className="text-lg font-bold">BM Crafting Flips</h1>
             <p className="text-sm text-muted">
               Buy refined resources in a Royal city, craft, and sell to the Black Market.
             </p>

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRecipes, getSpecialtyMap, getNameById, getItemName } from "@/lib/catalog";
-import { getPrices } from "@/lib/aodp";
+import { getPricesForSource, normalizeSource } from "@/lib/prices";
 import { computeCraft } from "@/lib/calc";
 import { CITIES, CRAFT_CITIES, DEFAULT_FRESH_HOURS } from "@/lib/constants";
 import type { CraftResult, CraftResponse } from "@/types";
@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
   const cityParam = q.get("city") || CRAFT_CITIES[0];
   const city = (CRAFT_CITIES as string[]).includes(cityParam) ? cityParam : CRAFT_CITIES[0];
   const premium = q.get("premium") !== "false";
+  const source = normalizeSource(q.get("source"));
   const focus = q.get("focus") === "true";
   const resSourceParam = q.get("resSource") || "cheapest";
   const resourceSource =
@@ -53,7 +54,7 @@ export async function GET(req: NextRequest) {
     ids.add(r.id);
     for (const res of r.resources) ids.add(res.id);
   }
-  const prices = await getPrices([...ids]);
+  const prices = await getPricesForSource([...ids], source);
 
   const results: CraftResult[] = [];
   for (const r of filtered) {
@@ -87,6 +88,7 @@ export async function GET(req: NextRequest) {
       city,
       stationFee: stationFeePer100,
       resourceSource,
+      source,
     },
   };
   return NextResponse.json(body);
